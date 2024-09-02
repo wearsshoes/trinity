@@ -2,67 +2,64 @@ import { setup, assign } from "xstate";
 
 export const machine = setup({
   types: {
-    context: {} as { score: number; history: unknown[] },
+    context: {} as { score: number; history: string[] },
     events: {} as
-      | { type: "NO" }
-      | { type: "SON" }
-      | { type: "YES" }
-      | { type: "BACK" }
       | { type: "ACCEPT" }
-      | { type: "ALWAYS" }
-      | { type: "FATHER" }
       | { type: "REFUSE" }
       | { type: "GOD_FATHER" }
-      | { type: "IRRELEVANT" }
-      | { type: "AROUND_0_AD" }
-      | { type: "BEFORE_TIME" }
-      | { type: "DIDNT_EXIST" }
+      | { type: "JESUS_CHRIST" }
       | { type: "HOLY_SPIRIT" }
       | { type: "MELCHISEDEK" }
+      | { type: "NO" }
+      | { type: "DIDNT_EXIST" }
+      | { type: "YES" }
+      | { type: "HOLY_SPIRIT_MANIFESTATION" }
+      | { type: "JESUS_PREVIOUS_LIFE" }
+      | { type: "OTHER_DEMIURGES" }
       | { type: "PEACEMAKERS" }
       | { type: "ALL_CHILDREN" }
-      | { type: "JESUS_CHRIST" }
-      | { type: "UPON_BAPTISM" }
-      | { type: "OTHER_DEMIURGES" }
+      | { type: "BEFORE_TIME" }
+      | { type: "ALWAYS" }
       | { type: "UPON_CONCEPTION" }
-      | { type: "JESUS_PREVIOUS_LIFE" }
+      | { type: "UPON_BAPTISM" }
+      | { type: "IRRELEVANT" }
+      | { type: "AROUND_0_AD" }
       | { type: "NO_HISTORICAL_EVIDENCE" }
-      | { type: "HOLY_SPIRIT_MANIFESTATION" },
+      | { type: "FATHER" }
+      | { type: "SON" }
+      | { type: "BACK" },
   },
   actions: {
-    followTruePath: assign({
+    incrementScore: assign({
       score: ({ context }) => context.score + 1,
+    }),
+    addToHistory: assign({
       history: ({ context, event }) => [...context.history, event.type],
     }),
-    beLedAstray: assign({
-      history: ({ context, event }) => [...context.history, event.type],
-    }),
-    goBack: assign({
-      score: ({ context }) => Math.max(0, context.score - 1),
+    removeFromHistory: assign({
       history: ({ context }) => context.history.slice(0, -1),
     }),
+    decrementScore: assign({
+      score: ({ context }) => Math.max(0, context.score - 1),
+    }),
   },
-  guards: {},
 }).createMachine({
   context: {
     score: 0,
     history: [],
   },
-  id: "trinityxinfinity",
+  id: "trinityQuiz3",
   initial: "Intro",
   on: {
     BACK: [
       {
-        target: "#trinityxinfinity.Intro", // TODO: needs to refer to previous state within the machine
-        actions: {
-          type: "goBack",
-        },
+        actions: ["removeFromHistory", "decrementScore"],
+        target: "Intro",
         guard: ({ context }) => context.history.length === 0,
       },
       {
-        actions: {
-          type: "goBack",
-        },
+        actions: ["removeFromHistory", "decrementScore"],
+        target: ({ context }) => context.history[context.history.length - 1] as any,
       },
     ],
   },
@@ -71,17 +68,11 @@ export const machine = setup({
       on: {
         ACCEPT: {
           target: "WordQuestion",
-          actions: {
-            type: "followTruePath",
-          },
-          description: "Accept and Continue",
+          actions: {type: "incrementScore", type: "addToHistory"},
         },
         REFUSE: {
           target: "Atheist",
-          actions: {
-            type: "beLedAstray",
-          },
-          description: "No, God is dead",
+          actions: {type: "addToHistory"},
         },
       },
       description:
@@ -91,31 +82,23 @@ export const machine = setup({
       on: {
         GOD_FATHER: {
           target: "Jew",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "God the Father",
+          actions: ["addToHistory"],
         },
         JESUS_CHRIST: {
           target: "SonOfGodQuestion",
-          actions: {
-            type: "followTruePath",
-          },
           description: "Jesus Christ",
+          actions: ["incrementScore", "addToHistory"],
         },
         HOLY_SPIRIT: {
           target: "Pre-Christian Judeo-Millenialist",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "The Holy Spirit",
+          actions: ["addToHistory"],
         },
         MELCHISEDEK: {
           target: "MelchisedekQuestion",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "Melchisedek",
+          actions: ["addToHistory"],
         },
       },
       description:
@@ -124,7 +107,7 @@ export const machine = setup({
     Atheist: {
       type: "final",
       description:
-        "You've chosen the path of atheism. This perspective rejects the existence of deities and supernatural beings, viewing the universe through a naturalistic lens. While not a Christian heresy per se, atheism challenges the fundamental premises of religious belief systems. (Come on, pick a more interesting path.)",
+        "You've chosen the path of atheism. This perspective rejects the existence of deities and supernatural beings, viewing the universe through a naturalistic lens. While not a Christian heresy per se, atheism challenges the fundamental premises of religious belief systems.\n\nCome on, pick a more interesting path.",
     },
     Jew: {
       type: "final",
@@ -135,22 +118,18 @@ export const machine = setup({
       on: {
         NO: {
           target: "MessiahQuestion",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "No",
+          actions: ["addToHistory"],
         },
         DIDNT_EXIST: {
           target: "member of some other religion",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "Didn't even exist",
+          actions: ["addToHistory"],
         },
         YES: {
           target: "OtherKidsQuestion",
           actions: {
-            type: "followTruePath",
+            type: "incrementScore",
           },
           description: "Yes",
         },
@@ -166,16 +145,10 @@ export const machine = setup({
       on: {
         HOLY_SPIRIT_MANIFESTATION: {
           target: "Pre-Christian Judeo-Millenialist",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "A manifestation of the Holy Spirit",
         },
         JESUS_PREVIOUS_LIFE: {
           target: "Sethian",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "Jesus Christ, in a previous life",
         },
       },
@@ -185,16 +158,10 @@ export const machine = setup({
       on: {
         NO: {
           target: "ProphetQuestion",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "No",
         },
         YES: {
           target: "Ebionite",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "Yes",
         },
       },
@@ -210,29 +177,20 @@ export const machine = setup({
         NO: {
           target: "BecameSonQuestion",
           actions: {
-            type: "followTruePath",
+            type: "incrementScore",
           },
           description: "No",
         },
         OTHER_DEMIURGES: {
           target: "Gnostic",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "Yes, other demiurges",
         },
         PEACEMAKERS: {
           target: "Hmm",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "The peacemakers",
         },
         ALL_CHILDREN: {
           target: "Mormon",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "Yes, we are all his children",
         },
       },
@@ -247,16 +205,10 @@ export const machine = setup({
       on: {
         YES: {
           target: "Abrahamic Monotheist",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "Yes",
         },
         NO: {
           target: "ExistenceQuestion",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "No",
         },
       },
@@ -271,30 +223,21 @@ export const machine = setup({
       on: {
         BEFORE_TIME: {
           target: "Arian",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "before time",
         },
         ALWAYS: {
           target: "BirthQuestion",
           actions: {
-            type: "followTruePath",
+            type: "incrementScore",
           },
           description: "always has been",
         },
         UPON_CONCEPTION: {
           target: "Socinian",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "upon conception",
         },
         UPON_BAPTISM: {
           target: "Adoptionist",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "upon baptism",
         },
       },
@@ -324,23 +267,14 @@ export const machine = setup({
       on: {
         NO: {
           target: "Pre-Christian Judeo-Millenialist",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "No",
         },
         YES: {
           target: "Christian Unitarian",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "Yes",
         },
         IRRELEVANT: {
           target: "Universal Unitarian",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "Irrelevant",
         },
       },
@@ -356,22 +290,16 @@ export const machine = setup({
         BEFORE_TIME: {
           target: "IncarnationQuestion",
           actions: {
-            type: "followTruePath",
+            type: "incrementScore",
           },
           description: "before time",
         },
         AROUND_0_AD: {
           target: "Orthodox",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "Around 0 AD",
         },
         NO_HISTORICAL_EVIDENCE: {
           target: "Historical-Critical Scholar",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "We have no historical evidence for his existence",
         },
       },
@@ -401,22 +329,16 @@ export const machine = setup({
       on: {
         FATHER: {
           target: "Hellenist",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "God the Father",
         },
         SON: {
           target: "Heinleinist",
-          actions: {
-            type: "beLedAstray",
-          },
           description: "God the Son",
         },
         HOLY_SPIRIT: {
           target: "Orthodox",
           actions: {
-            type: "followTruePath",
+            type: "incrementScore",
           },
           description: "The Holy Spirit",
         },

@@ -1,4 +1,3 @@
-
 # main.ts Knowledge
 
 ## File Purpose
@@ -20,6 +19,7 @@ The file uses XState for state management. It creates an actor from the machine 
 ## Event Handling
 - Click events on option buttons trigger state transitions.
 - A restart button is provided at the end of the quiz to reset the state.
+- When restarting, a 'START' event is sent to ensure transition from the initial state.
 
 ## Debugging Tips
 - Console logs are placed strategically to track state changes and UI updates.
@@ -29,3 +29,8 @@ The file uses XState for state management. It creates an actor from the machine 
 - Implement error handling for edge cases (e.g., missing DOM elements).
 - Consider adding more detailed logging for complex state transitions.
 - Enhance the UI rendering process for better user experience.
+
+## Restart Functionality
+- The restart button creates a new actor instance using `createQuizActor()`.
+- No need to explicitly send a 'START' event after creating the new actor, as `createQuizActor()` already starts the actor.
+- `updateUI()` is called immediately after creating the new actor to refresh the UI.

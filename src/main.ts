@@ -1,79 +1,74 @@
 import { createActor } from 'xstate';
 import { machine } from './state';
 
-const actor = createActor(machine);
-const app = document.querySelector<HTMLDivElement>('#app');
+let actor = createActor(machine);
+const app = document.getElementById('app')!;
 
-function updateUI(state: any) {
-  console.log('Updating UI. Current state:', state.value);
-  if (!app) {
-    console.error('App element not found');
-    return;
-  }
-
+function renderState(state: any) {
   const { value, context } = state;
   const currentState = typeof value === 'string' ? value : Object.keys(value)[0];
   const stateNode = machine.states[currentState];
-
-  console.log('Getting question text for state:', currentState);
-  const description = stateNode.description || '';
-
-  if (currentState === 'result') {
-    renderResult(description, context.score);
+  if (stateNode.type === 'final') {
+    renderResult(currentState, stateNode.description, context.score, context.history);
   } else {
-    renderQuestion(currentState, description, Object.keys(stateNode.on || {}));
+    const options = Object.entries(stateNode.on || {})
+      .filter(([key]) => key !== 'BACK')
+      .map(([key, value]) => ({
+        event: key,
+        description: value[0].description || key
+      }));
+    renderQuestion(currentState, stateNode.description, options, context.history);
   }
 }
 
-function renderQuestion(state: string, description: string, options: string[]) {
-  if (!app) return;
-  console.log('Getting options HTML for state:', state);
+function renderQuestion(state: string, description: string = '', options: { event: string, description: string }[], history: string[]) {
   app.innerHTML = `
-    <h2>${state}</h2>
+    <div id="history-path">Path: ${renderHistoryPath(history)}</div>
     <p>${description}</p>
-    ${options.map(option => `<button data-event="${option}">${option}</button>`).join('')}
+    ${options.map(option => `<p><button data-event="${option.event}">${option.description}</button></p>`).join('')}
+    ${history.length > 0 ? '<p><button id="back-button">Back</button></p>' : ''}
   `;
-
   const buttons = app.querySelectorAll('button');
   buttons.forEach(button => {
-    console.log('Added option button:', button.textContent);
-    button.addEventListener('click', () => {
-      actor.send({ type: button.dataset.event as any });
-    });
+    if (button.id === 'back-button') {
+      button.addEventListener('click', () => {
+        actor.send({ type: 'BACK' });
+      });
+    } else {
+      button.addEventListener('click', () => {
+        actor.send({ type: button.dataset.event as any });
+      });
+    }
   });
 }
 
-function renderResult(description: string, score: number) {
-  if (!app) return;
-  console.log('Rendering result');
+function renderResult(state: string, description: string = '', score: number, history: string[]) {
   app.innerHTML = `
-    <h2>Quiz Complete</h2>
+    <div id="history-path">Path: ${renderHistoryPath(history)}</div>
+    <h2>You are a ${state.toUpperCase()} and must be BURNED at the STAKE!</h2>
     <p>${description}</p>
-    <p>Your score: ${score} out of 4</p>
+    <p>You successfully navigated ${score} thorny theological dilemmas.</p>
     <button id="restart">Restart Quiz</button>
   `;
-
   const restartButton = document.getElementById('restart');
-  console.log('Restart button element:', restartButton);
-  restartButton?.addEventListener('click', () => {
-    console.log('Restart button clicked');
-    actor.stop();
-    actor.start();
-    updateUI(actor.getSnapshot());
-  });
+  restartButton?.addEventListener('click', restartQuiz);
 }
 
-let previousState: string | null = null;
+function renderHistoryPath(history: string[]): string {
+  return history.join(' → ');
+}
 
-actor.subscribe((state) => {
-  const currentState = JSON.stringify(state.value);
-  if (currentState !== previousState) {
-    console.log('State changed. Previous:', previousState, 'Current:', currentState);
-    updateUI(state);
-    previousState = currentState;
-  }
+function restartQuiz() {
+  actor.stop();
+  actor = createActor(machine);
+  actor.subscribe(state => {
+    renderState(state);
+  });
+  actor.start();
+}
+
+actor.subscribe(state => {
+  renderState(state);
 });
 
 actor.start();
-console.log('Initial state:', actor.getSnapshot().value);
-updateUI(actor.getSnapshot());
