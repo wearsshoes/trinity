@@ -226,7 +226,7 @@ export const machine = setup({
           description: "Yes, other demiurges",
         },
         PEACEMAKERS: {
-          target: "Hmm",
+          target: "Smartass",
           actions: {
             type: "beLedAstray",
           },
@@ -309,7 +309,7 @@ export const machine = setup({
       description:
         "Gnosticism encompasses various religious ideas and systems prevalent in the first and second century AD. Gnostics believed in secret knowledge (gnosis) as the key to salvation. They often viewed the material world as evil, created by a lesser deity (demiurge), with the true God being distant and unknowable.",
     },
-    Hmm: {
+    Smartass: {
       type: "final",
       description:
         "While not a formal theological position, your answer shows familiarity with scripture. The concept of the 'peacemakers' as children of God comes from the Beatitudes in Jesus' Sermon on the Mount.",
