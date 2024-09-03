@@ -78,7 +78,7 @@ export const machine = setup({
           actions: {
             type: "followTruePath",
           },
-          description: "Accept and Continue",
+          description: "Accept and continue",
         },
         REFUSE: {
           target: "Atheist",
@@ -89,7 +89,7 @@ export const machine = setup({
         },
       },
       description:
-        "By using this site, you hereby consent to be treated as if you believe in (at least) one God, the father almighty, maker of heaven and earth, of all things visible and invisible.",
+        "By using this site, you hereby consent to be treated as if you believe in (at least) one God, the Father Almighty, maker of Heaven and Earth, of all Things visible and invisible.",
     },
     WordQuestion: {
       on: {
@@ -128,7 +128,7 @@ export const machine = setup({
     Atheist: {
       type: "final",
       description:
-        "You've chosen the path of atheism. This perspective rejects the existence of deities and supernatural beings, viewing the universe through a naturalistic lens. While not a Christian heresy per se, atheism challenges the fundamental premises of religious belief systems. (Come on, pick a more interesting path.)",
+        "Atheists are those who don't believe in God, sometimes insistently so. (Come on, pick a more interesting path.)",
     },
     "Normal Jew": {
       type: "final",
@@ -322,7 +322,7 @@ export const machine = setup({
     "Abrahamic Monotheist": {
       type: "final",
       description:
-        "Your views align with several Abrahamic monotheistic religions such as Islam, Baha'i Faith, or certain sects of Judaism. You're a person of the Book, for sure! These faiths recognize Jesus as a prophet or important religious figure, but not as divine or as the Son of God.",
+        "You're a person of the Book, mashallah! Your views align with several Abrahamic monotheistic religions such as Islam, Baha'i Faith, or certain sects of Judaism. These faiths recognize Jesus as a prophet or important religious figure, but not as divine or as the Son of God.",
     },
     ExistenceQuestion: {
       on: {
@@ -362,9 +362,10 @@ export const machine = setup({
           actions: {
             type: "followTruePath",
           },
-          description: "before time",
+          description: "before time began",
         },
         AROUND_0_AD: {
+          target: "Confused",
           actions: {
             type: "beLedAstray",
           },
@@ -403,7 +404,7 @@ export const machine = setup({
     "Historical-Critical Scholar": {
       type: "final",
       description:
-        "Your perspective aligns with historical-critical scholarship, which approaches religious texts and figures from a secular, academic standpoint. This view emphasizes the importance of historical evidence and context in understanding religious claims and figures.",
+        "You approach religious texts and figures from a secular, academic standpoint. This view emphasizes the importance of historical evidence and context in understanding religious claims and figures.",
     },
     IncarnationQuestion: {
       on: {
@@ -430,6 +431,11 @@ export const machine = setup({
         },
       },
       description: "Who incarnated Jesus unto the Virgin Mary?",
+    },
+    Confused: {
+      type: "final",
+      description:
+        "In the Nicene view, Jesus was incarnate of the Virgin Mary, not born unto her. Despite what you may have read elsewhere, such as in, I don't know, the Gospels. It's a bit annoying.",
     },
     Hellenist: {
       type: "final",

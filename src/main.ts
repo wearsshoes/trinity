@@ -53,7 +53,7 @@ function renderQuestion(_state: string, description: string = '', options: { eve
 function renderResult(state: string, description: string = '', score: number, history: string[]) {
   app.innerHTML = `
     <div class="quiz-container result">
-      <h2 class="result-title">You are a ${state.toUpperCase()}!</h2>
+      <h2 class="result-title">You are a(n) ${state.toUpperCase()}!</h2>
       <p class="result-description">${description}</p>
       <p class="score">You successfully navigated ${score} thorny theological dilemmas.</p>
       <button id="restart" class="restart-btn">Restart Quiz</button>
