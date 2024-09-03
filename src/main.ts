@@ -22,7 +22,7 @@ function renderState(state: any) {
   }
 }
 
-function renderQuestion(state: string, description: string = '', options: { event: string, description: string }[], history: string[]) {
+function renderQuestion(_state: string, description: string = '', options: { event: string, description: string }[], history: string[]) {
   app.innerHTML = `
     <div class="quiz-container">
       <div class="question">
