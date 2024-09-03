@@ -1,23 +1,40 @@
 
 :root {
-  --primary-color: #ff6b6b;
+  --primary-color: #333;
   --secondary-color: #4ecdc4;
   --background-color: #f7f7f7;
   --text-color: #333;
   --button-hover-color: #ff8787;
 }
 
+.logo {
+  width: 270px; /* Adjust the width as needed */
+  height: auto; /* Maintain aspect ratio */
+}
+
 body {
-  /* font-family: 'Comic Sans MS', cursive, sans-serif; */
+  vertical-align: middle;
   background-color: var(--background-color);
   color: var(--text-color);
-  /* display: flex; */
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
-  padding: 20px;
-  box-sizing: border-box;
+  text-align: center;
+  font-family: Verdana, sans-serif;
+  font-weight: 400;
+  font-style: regular;
+  padding: 15%;
+  /* box-sizing: border-box; */
+}
+
+h1 {
+  font-family: 'Uncial Antiqua', cursive;
+  font-size: 3em;
+  color: var(--primary-color);
+  margin: 20px;
+  width: 75%;
+
 }
 
 .quiz-container {
@@ -38,6 +55,7 @@ body {
 .question h2 {
   color: var(--primary-color);
   font-size: 1.5em;
+  font-weight: 400;
   margin-bottom: 20px;
 }
 

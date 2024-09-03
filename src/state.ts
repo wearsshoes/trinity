@@ -42,22 +42,26 @@ export const machine = setup({
       history: ({ context }) => context.history.slice(0, -1),
     }),
   },
-  guards: {},
+  guards: {
+    contextGuard: ({ context }) => context.history.length === 0,
+  },
 }).createMachine({
   context: {
     score: 0,
     history: [],
   },
-  id: "trinityxinfinity",
+  id: "trinityQuiz",
   initial: "Intro",
   on: {
     BACK: [
       {
-        target: "#trinityxinfinity.Intro", // TODO: needs to refer to previous state within the machine
+        target: "#trinityQuiz.Intro",
         actions: {
           type: "goBack",
         },
-        guard: ({ context }) => context.history.length === 0,
+        guard: {
+          type: "contextGuard",
+        },
       },
       {
         actions: {
@@ -85,12 +89,12 @@ export const machine = setup({
         },
       },
       description:
-        "By using this site, you hereby consent to be treated as if you believe in one God, the father almighty, maker of heaven and earth, of all things visible and invisible.",
+        "By using this site, you hereby consent to be treated as if you believe in (at least) one God, the father almighty, maker of heaven and earth, of all things visible and invisible.",
     },
     WordQuestion: {
       on: {
         GOD_FATHER: {
-          target: "Jew",
+          target: "Normal Jew",
           actions: {
             type: "beLedAstray",
           },
@@ -126,10 +130,10 @@ export const machine = setup({
       description:
         "You've chosen the path of atheism. This perspective rejects the existence of deities and supernatural beings, viewing the universe through a naturalistic lens. While not a Christian heresy per se, atheism challenges the fundamental premises of religious belief systems. (Come on, pick a more interesting path.)",
     },
-    Jew: {
+    "Normal Jew": {
       type: "final",
       description:
-        "While not a Christian heresy, Judaism is the monotheistic faith from which Christianity emerged. It believes in one God and awaits the coming of the Messiah, but does not recognize Jesus as the prophesied Messiah or as divine.",
+        "You don't put up with any of this resurrection stuff. Judaism is the monotheistic faith from which Christianity emerged. It believes in one God and awaits the coming of the Messiah, but does not recognize Jesus as the prophesied Messiah or as divine.",
     },
     SonOfGodQuestion: {
       on: {
@@ -188,7 +192,7 @@ export const machine = setup({
           actions: {
             type: "beLedAstray",
           },
-          description: "No",
+          description: "No, he's a very naughty boy",
         },
         YES: {
           target: "Ebionite",
@@ -322,13 +326,6 @@ export const machine = setup({
     },
     ExistenceQuestion: {
       on: {
-        NO: {
-          target: "Pre-Christian Judeo-Millenialist",
-          actions: {
-            type: "beLedAstray",
-          },
-          description: "No",
-        },
         YES: {
           target: "Christian Unitarian",
           actions: {
@@ -342,6 +339,13 @@ export const machine = setup({
             type: "beLedAstray",
           },
           description: "Irrelevant",
+        },
+        NO: {
+          target: "Historical-Critical Scholar",
+          actions: {
+            type: "beLedAstray",
+          },
+          description: "No",
         },
       },
       description: "Did Jesus exist historically?",
@@ -361,7 +365,6 @@ export const machine = setup({
           description: "before time",
         },
         AROUND_0_AD: {
-          target: "Orthodox",
           actions: {
             type: "beLedAstray",
           },
@@ -397,6 +400,11 @@ export const machine = setup({
       description:
         "Unitarian Universalism is a liberal religion characterized by its support for a free and responsible search for truth and meaning. It has no specific creedal requirements and draws inspiration from various religious and philosophical traditions.",
     },
+    "Historical-Critical Scholar": {
+      type: "final",
+      description:
+        "Your perspective aligns with historical-critical scholarship, which approaches religious texts and figures from a secular, academic standpoint. This view emphasizes the importance of historical evidence and context in understanding religious claims and figures.",
+    },
     IncarnationQuestion: {
       on: {
         FATHER: {
@@ -423,16 +431,6 @@ export const machine = setup({
       },
       description: "Who incarnated Jesus unto the Virgin Mary?",
     },
-    Orthodox: {
-      type: "final",
-      description:
-        "Your answers align with Orthodox Christian doctrine, which holds that Jesus Christ is the eternal Son of God, incarnate by the Holy Spirit and born of the Virgin Mary. This view maintains the full divinity and humanity of Christ, as well as the doctrine of the Trinity.",
-    },
-    "Historical-Critical Scholar": {
-      type: "final",
-      description:
-        "Your perspective aligns with historical-critical scholarship, which approaches religious texts and figures from a secular, academic standpoint. This view emphasizes the importance of historical evidence and context in understanding religious claims and figures.",
-    },
     Hellenist: {
       type: "final",
       description:
@@ -442,6 +440,39 @@ export const machine = setup({
       type: "final",
       description:
         "I know where I came from, but where did all you zombies come from?",
+    },
+    Orthodox: {
+      type: "final",
+      description:
+        "Your answers align with Orthodox Christian doctrine, which holds that Jesus Christ is the eternal Son of God, incarnate by the Holy Spirit and born of the Virgin Mary. This view maintains the full divinity and humanity of Christ, as well as the doctrine of the Trinity.",
+    },
+    Messalian: {
+      type: "final",
+      description:
+        "The Messalians believed that the Trinity is literally perceptible, and is united with the souls of the perfect.",
+    },
+    "Do you feel like you understand the trinity now?": {
+      on: {
+        NO: {
+          target: "The true faith",
+          actions: {
+            type: "followTruePath",
+          },
+          description: "No, it is an ineffable mystery",
+        },
+        YES: {
+          target: "Messalian",
+          actions: {
+            type: "beLedAstray",
+          },
+          description: "Yes! I feel it in my bones",
+        },
+      },
+    },
+    "The true faith": {
+      type: "final",
+      description:
+        "Sola fide, indeed! Congratulations, you have successfully navigated all the major Christological heresies and are in line with the view of the Catholic Church.",
     },
   },
 });
